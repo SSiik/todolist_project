@@ -4,6 +4,7 @@ import com.example.backend.todolist.dto.mainDto;
 import com.example.backend.todolist.enttiy.board;
 import com.example.backend.todolist.enttiy.subBoard;
 import com.example.backend.todolist.repository.boardRepository;
+import com.example.backend.todolist.repository.memoRepository;
 import com.example.backend.todolist.repository.subBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class boardService {
 
     private final boardRepository boardRepository;
     private final subBoardRepository subBoardRepository;
+    private final memoRepository memoRepository;
 
 
 //    public mainDto getMainPage(String username) {
