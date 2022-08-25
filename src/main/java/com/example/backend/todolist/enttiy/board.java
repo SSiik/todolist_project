@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class board extends TimeEntity {
 
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<subBoard> subBoards = new ArrayList<>();
+    private List<step> subBoards = new ArrayList<>();
 
     @Column
     private boolean cleared;
@@ -35,10 +34,14 @@ public class board extends TimeEntity {
     @Column
     private boolean expired;
 
+    @Column
+    private boolean now;
+
     public board(String username, String content) {
         this.username = username;
         this.content = content;
         this.cleared = false;
         this.expired = false;
+        this.now = true;
     }
 }

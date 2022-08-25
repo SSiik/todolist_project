@@ -18,7 +18,7 @@ public class userController {
     private final userService userService;
 
     @PostMapping("/user/signup")
-    public String signup(@RequestBody signupDto signupDto){
+    public String signup(@Validated @RequestBody signupDto signupDto){
         if(userService.duplicateCheck(signupDto.getUsername())){ //아이디 중복체크
             userService.join(signupDto); //중복되지 않는 아이디라면, 회원가입.
         }

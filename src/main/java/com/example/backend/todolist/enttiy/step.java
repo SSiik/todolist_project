@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class subBoard {
+public class step extends TimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +25,7 @@ public class subBoard {
     @JoinColumn(name = "board_id")
     private board board;
 
-    public subBoard(String username, String content, board board) {
+    public step(String username, String content, board board) {
         this.username = username;
         this.content = content;
         this.board = board;

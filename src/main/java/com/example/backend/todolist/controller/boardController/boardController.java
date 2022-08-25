@@ -1,10 +1,11 @@
 package com.example.backend.todolist.controller.boardController;
 
-import com.example.backend.todolist.dto.Producer;
-import com.example.backend.todolist.dto.boardDto;
-import com.example.backend.todolist.dto.mainDto;
-import com.example.backend.todolist.dto.subBoardDto;
+import com.example.backend.todolist.dto.*;
+import com.example.backend.todolist.dto.toQueueDto.boardToQueueDto;
+import com.example.backend.todolist.dto.toQueueDto.memoToQueueDto;
+import com.example.backend.todolist.dto.toQueueDto.subBoardToQueueDto;
 import com.example.backend.todolist.service.boardService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,50 +29,88 @@ public class boardController {
         return new ResponseEntity<>(mainDto, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("board/post")
-    public void putBoard(HttpServletRequest request, @RequestBody boardDto boardDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    @PutMapping("board/post")
+    public void putBoard(HttpServletRequest request, @RequestBody String content) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
-        if(boardDto.getId()==null)
-           boardService.post(ide,boardDto.getContent());
-        else
-            boardService.postUpdate(boardDto.getId(),ide,boardDto.getContent());
+        boardToQueueDto dto = new boardToQueueDto();
+        dto.setUsername(ide); dto.setContent(content); dto.setStatus(1);
+        producer.sendToBoardQueue(dto);
+
+    }
+
+    @PostMapping("board/post")
+    public void updateBoard(HttpServletRequest request, @RequestBody boardDto boardDto) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+        String ide = (String)request.getAttribute("username");
+        boardToQueueDto dto = new boardToQueueDto();
+        dto.setUsername(ide); dto.setBoard_id(boardDto.getId()); dto.setContent(boardDto.getContent()); dto.setStatus(2);
+        producer.sendToBoardQueue(dto);
+    }
+
+    @PostMapping("board/post/cleared")
+    public void clearBoard(HttpServletRequest request, @RequestBody Long id){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+        String ide = (String)request.getAttribute("username");
+        boardToQueueDto dto = new boardToQueueDto();
+        dto.setUsername(ide); dto.setBoard_id(id); dto.setStatus(3);
+        producer.sendToBoardQueue(dto);
     }
 
     @DeleteMapping("board/post")
     public void deleteBoard(HttpServletRequest request, @RequestBody Long id) {
         String ide = (String)request.getAttribute("username");
-        boardService.deletepost(id,ide);
+        boardToQueueDto dto = new boardToQueueDto();
+        dto.setUsername(ide); dto.setBoard_id(id); dto.setStatus(4);
+        producer.sendToBoardQueue(dto);
+    }
+
+    @PutMapping("board/subboard/post")
+    public void putSubBoard(HttpServletRequest request, @RequestBody subBoardDto subBoardDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+        String ide = (String)request.getAttribute("username");
+        subBoardToQueueDto dto = new subBoardToQueueDto();
+        dto.setBoard_id(subBoardDto.getId()); dto.setContent(subBoardDto.getContent());
+        dto.setUsername(ide); dto.setStatus(1);
+        producer.sendToSubBoardQueue(dto);
     }
 
     @PostMapping("board/subboard/post")
-    public void putSubBoard(HttpServletRequest request, @RequestBody subBoardDto subBoardDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    public void updateSubBoard(HttpServletRequest request, @RequestBody subBoardDto subBoardDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
-        if(subBoardDto.getId()==null)
-            boardService.subpost(ide, subBoardDto.getContent(), subBoardDto.getId());
-        else
-            boardService.subpostUpdate(ide, subBoardDto.getContent(), subBoardDto.getId(), subBoardDto.getSubBoard_id() );
+        subBoardToQueueDto dto = new subBoardToQueueDto();
+        dto.setBoard_id(subBoardDto.getId()); dto.setContent(subBoardDto.getContent());
+        dto.setUsername(ide); dto.setStatus(2); dto.setSubBoard_id(subBoardDto.getSubBoard_id());
+        producer.sendToSubBoardQueue(dto);
     }
 
     @DeleteMapping("board/subboard/post")
     public void deleteSubBoard(HttpServletRequest request, @RequestBody Long id) {
         String ide = (String)request.getAttribute("username");
-        boardService.subdeletepost(id,ide);
+        subBoardToQueueDto dto = new subBoardToQueueDto();
+        dto.setUsername(ide); dto.setStatus(3); dto.setSubBoard_id(id);
+        producer.sendToSubBoardQueue(dto);
+    }
+
+    @PutMapping("board/memo/post")
+    public void putMemo(HttpServletRequest request, @RequestBody memoDto memoDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+        String ide = (String)request.getAttribute("username");
+        memoToQueueDto dto = new memoToQueueDto();
+        dto.setUsername(ide); dto.setContent(memoDto.getContent()); dto.setStatus(1);
+        producer.sendToMemoQueue(dto);
     }
 
     @PostMapping("board/memo/post")
-    public void putMemo(HttpServletRequest request, @RequestBody boardDto boardDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    public void updateMemo(HttpServletRequest request, @RequestBody memoDto memoDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
-        if(boardDto.getId()==null)
-            boardService.memopost(ide,boardDto.getContent());
-        else
-            boardService.memopostUpdate(ide,boardDto.getContent());
+        memoToQueueDto dto = new memoToQueueDto();
+        dto.setUsername(ide); dto.setContent(memoDto.getContent()); dto.setId(memoDto.getId()); dto.setStatus(2);
+        producer.sendToMemoQueue(dto);
     }
 
 
     @DeleteMapping("board/memo/post")
-    public void deleteMemo(HttpServletRequest request, @RequestBody boardDto boardDto){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    public void deleteMemo(HttpServletRequest request, @RequestBody Long id){ //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
-        boardService.deletememo(ide);
+        memoToQueueDto dto = new memoToQueueDto();
+        dto.setUsername(ide); dto.setId(id); dto.setStatus(3);
+        producer.sendToMemoQueue(dto);
     }
 
 }
