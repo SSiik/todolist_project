@@ -20,7 +20,8 @@ public class Consumer {
     boardService boardService;
 
     @RabbitListener(queues = "BOARD_QUEUE") //board큐
-    public void handler1(boardToQueueDto dto) throws JsonProcessingException {
+    public void handler1(String message) throws JsonProcessingException {
+        boardToQueueDto dto = objectMapper.readValue(message, boardToQueueDto.class);
         if(dto.getStatus()==1)
             boardService.post(dto.getUsername(),dto.getContent());
         else if(dto.getStatus()==2)
@@ -32,7 +33,8 @@ public class Consumer {
     }
 
     @RabbitListener(queues = "SUBBOARD_QUEUE") //subBoard큐
-    public void handler2(subBoardToQueueDto dto) throws JsonProcessingException {
+    public void handler2(String message) throws JsonProcessingException {
+        subBoardToQueueDto dto = objectMapper.readValue(message, subBoardToQueueDto.class);
         if(dto.getStatus()==1)
             boardService.subpost(dto.getUsername(), dto.getContent(), dto.getBoard_id());
         else if(dto.getStatus()==2)
@@ -42,7 +44,8 @@ public class Consumer {
     }
 
     @RabbitListener(queues = "MEMO_QUEUE") //subBoard큐
-    public void handler3(memoToQueueDto dto) throws JsonProcessingException {
+    public void handler3(String message) throws JsonProcessingException {
+        memoToQueueDto dto = objectMapper.readValue(message, memoToQueueDto.class);
         if(dto.getStatus()==1)
             boardService.memopost(dto.getUsername(), dto.getContent());
         else if(dto.getStatus()==2)

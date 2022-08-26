@@ -7,12 +7,16 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class ElasticsearchConfig {
+public class ElasticsearchConfig  {
     //username 중복체크시 확인해볼수 있을것?
     @Value("#{'${spring.data.elasticsearch.hosts}'.split(',')}")
     private List<String> hosts;
@@ -21,12 +25,18 @@ public class ElasticsearchConfig {
     private int port;
 
     @Bean
-    public RestClient getRestClient(){
+    public RestHighLevelClient getRestClient(){
         List<HttpHost> hostList = new ArrayList<>();
         for (String host : hosts) {
             hostList.add(new HttpHost(host,port,"http"));
         }
         RestClientBuilder builder = RestClient.builder(hostList.toArray(new HttpHost[hostList.size()]));
-        return builder.build();
+        return new RestHighLevelClient(builder);
     }
+
+    @Bean
+    public ElasticsearchOperations elasticsearchTemplate(){
+        return new ElasticsearchRestTemplate(getRestClient());
+    }
+
 }

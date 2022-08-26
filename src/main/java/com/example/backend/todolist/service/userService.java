@@ -5,7 +5,6 @@ import com.example.backend.todolist.enttiy.board;
 import com.example.backend.todolist.enttiy.user;
 import com.example.backend.todolist.repository.boardRepository;
 import com.example.backend.todolist.repository.userRepository;
-import jdk.vm.ci.meta.Local;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
