@@ -6,11 +6,12 @@ import com.example.backend.todolist.dto.toQueueDto.subBoardToQueueDto;
 import com.example.backend.todolist.service.boardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component @Slf4j
 public class Consumer {
 
     @Autowired
@@ -22,6 +23,8 @@ public class Consumer {
     @RabbitListener(queues = "BOARD_QUEUE") //board큐
     public void handler1(String message) throws JsonProcessingException {
         boardToQueueDto dto = objectMapper.readValue(message, boardToQueueDto.class);
+        log.info("실행 되고 있을까요???!!!!");
+        System.out.println(dto.getContent());
         if(dto.getStatus()==1)
             boardService.post(dto.getUsername(),dto.getContent());
         else if(dto.getStatus()==2)

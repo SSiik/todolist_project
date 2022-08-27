@@ -5,6 +5,7 @@ import com.example.backend.todolist.dto.toQueueDto.memoToQueueDto;
 import com.example.backend.todolist.dto.toQueueDto.subBoardToQueueDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component @Slf4j
 public class Producer {
 
     @Autowired
@@ -23,16 +24,17 @@ public class Producer {
 
     public void sendToBoardQueue(boardToQueueDto dto) throws JsonProcessingException {
         String message = objectMapper.writeValueAsString(dto);
-        this.template.convertAndSend("test_exchange","BOARD_KEY",message);
+        log.info("실행 되고 있을까요???!!!!");
+        this.template.convertAndSend("BOARD_QUEUE",message);
     }
 
     public void sendToSubBoardQueue(subBoardToQueueDto dto) throws JsonProcessingException {
         String message = objectMapper.writeValueAsString(dto);
-        this.template.convertAndSend("test_exchange","SUBBOARD_KEY",message);
+        this.template.convertAndSend("SUBBOARD_QUEUE",message);
     }
 
     public void sendToMemoQueue(memoToQueueDto dto) throws JsonProcessingException {
         String message = objectMapper.writeValueAsString(dto);
-        this.template.convertAndSend("test_exchange","MEMO_KEY",message);
+        this.template.convertAndSend("MEMO_QUEUE",message);
     }
 }

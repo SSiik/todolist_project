@@ -34,9 +34,4 @@ public class ElasticsearchConfig  {
         return new RestHighLevelClient(builder);
     }
 
-    @Bean
-    public ElasticsearchOperations elasticsearchTemplate(){
-        return new ElasticsearchRestTemplate(getRestClient());
-    }
-
 }

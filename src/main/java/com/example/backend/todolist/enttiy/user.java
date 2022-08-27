@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Data
 @Document(indexName = "user")
 public class user {
+
     @Id
     private String id;
 

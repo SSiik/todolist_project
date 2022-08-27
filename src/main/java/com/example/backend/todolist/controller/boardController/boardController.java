@@ -8,17 +8,22 @@ import com.example.backend.todolist.service.boardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController @RequiredArgsConstructor
+@RestController @Slf4j
 public class boardController {
 
-    private final boardService boardService;
-    private final Producer producer;
+    @Autowired
+    private boardService boardService;
+
+    @Autowired
+    private Producer producer;
 
 
 
@@ -31,10 +36,11 @@ public class boardController {
     }
 
     @PutMapping("board/post")
-    public void putBoard(HttpServletRequest request, @RequestBody String content) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    public void putBoard(HttpServletRequest request, @RequestBody boardDto boardDto) throws JsonProcessingException {
+        //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
         boardToQueueDto dto = new boardToQueueDto();
-        dto.setUsername(ide); dto.setContent(content); dto.setStatus(1);
+        dto.setUsername(ide); dto.setContent(boardDto.getContent()); dto.setStatus(1);
         producer.sendToBoardQueue(dto);
 
     }
@@ -48,22 +54,22 @@ public class boardController {
     }
 
     @PostMapping("board/post/cleared")
-    public void clearBoard(HttpServletRequest request, @RequestBody Long id) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    public void clearBoard(HttpServletRequest request, @RequestBody idDto idDto) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
         boardToQueueDto dto = new boardToQueueDto();
-        dto.setUsername(ide); dto.setBoard_id(id); dto.setStatus(3);
+        dto.setUsername(ide); dto.setBoard_id(idDto.getId()); dto.setStatus(3);
         producer.sendToBoardQueue(dto);
     }
 
     @DeleteMapping("board/post")
-    public void deleteBoard(HttpServletRequest request, @RequestBody Long id) throws JsonProcessingException {
+    public void deleteBoard(HttpServletRequest request, @RequestBody idDto idDto) throws JsonProcessingException {
         String ide = (String)request.getAttribute("username");
         boardToQueueDto dto = new boardToQueueDto();
-        dto.setUsername(ide); dto.setBoard_id(id); dto.setStatus(4);
+        dto.setUsername(ide); dto.setBoard_id(idDto.getId()); dto.setStatus(4);
         producer.sendToBoardQueue(dto);
     }
 
-    @PutMapping("board/subboard/post")
+    @PutMapping("board/step/post")
     public void putSubBoard(HttpServletRequest request, @RequestBody subBoardDto subBoardDto) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
         subBoardToQueueDto dto = new subBoardToQueueDto();
@@ -72,7 +78,7 @@ public class boardController {
         producer.sendToSubBoardQueue(dto);
     }
 
-    @PostMapping("board/subboard/post")
+    @PostMapping("board/step/post")
     public void updateSubBoard(HttpServletRequest request, @RequestBody subBoardDto subBoardDto) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
         subBoardToQueueDto dto = new subBoardToQueueDto();
@@ -81,11 +87,11 @@ public class boardController {
         producer.sendToSubBoardQueue(dto);
     }
 
-    @DeleteMapping("board/subboard/post")
-    public void deleteSubBoard(HttpServletRequest request, @RequestBody Long id) throws JsonProcessingException {
+    @DeleteMapping("board/step/post")
+    public void deleteSubBoard(HttpServletRequest request, @RequestBody idDto idDto) throws JsonProcessingException {
         String ide = (String)request.getAttribute("username");
         subBoardToQueueDto dto = new subBoardToQueueDto();
-        dto.setUsername(ide); dto.setStatus(3); dto.setSubBoard_id(id);
+        dto.setUsername(ide); dto.setStatus(3); dto.setSubBoard_id(idDto.getId());
         producer.sendToSubBoardQueue(dto);
     }
 
@@ -107,10 +113,10 @@ public class boardController {
 
 
     @DeleteMapping("board/memo/post")
-    public void deleteMemo(HttpServletRequest request, @RequestBody Long id) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
+    public void deleteMemo(HttpServletRequest request, @RequestBody idDto idDto) throws JsonProcessingException { //페이징 처리. 게시판 목록을 보여주는 메인페이지겠죠.
         String ide = (String)request.getAttribute("username");
         memoToQueueDto dto = new memoToQueueDto();
-        dto.setUsername(ide); dto.setId(id); dto.setStatus(3);
+        dto.setUsername(ide); dto.setId(idDto.getId()); dto.setStatus(3);
         producer.sendToMemoQueue(dto);
     }
 

@@ -30,10 +30,14 @@ public class userController {
 
     @PostMapping("/user/login")
     public String LogIn(@RequestBody signupDto signupDto, HttpServletRequest request){
-        String username = userService.login(signupDto.getUsername(),signupDto.getPassword());
-        HttpSession session = request.getSession(); //기본값 true, 있다면 기존세션 반환 없다면 생성.
-        session.setAttribute("username",username); //세션정보로 사용자의 ide를 들고있음. 회원가입때 검증로직으로 중복되지않을것.
-        return "OK";
+        if(userService.login(signupDto.getUsername(),signupDto.getPassword())){
+            HttpSession session = request.getSession(); //기본값 true, 있다면 기존세션 반환 없다면 생성.
+            session.setAttribute("username", signupDto.getUsername()); //세션정보로 사용자의 ide를 들고있음. 회원가입때 검증로직으로 중복되지않을것.
+            return "OK";
+        }
+        else{
+            return "FAIL";
+        }
     }
 
     @PostMapping("/user/logout")

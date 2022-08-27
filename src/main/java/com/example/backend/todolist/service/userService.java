@@ -28,13 +28,14 @@ public class userService {
             return true;
         }
     }
+
     public void join(signupDto signupDto){
         user user = new user(signupDto.getUsername(),signupDto.getPassword());
         userRepository.save(user);
     }
 
     @Transactional
-    public String login(String ide,String password){
+    public boolean login(String ide,String password){
         Optional<user> result = userRepository.findByUsernameAndPassword(ide, password);
         log.info("로그인 요청이 들어왔습니다.");
         if(result.isPresent()) {
@@ -48,7 +49,7 @@ public class userService {
                 }
                 //로그인시 만료처리.
             }
-            return "OK";
+            return true;
         }
         else throw new RuntimeException("일치하지 않는 로그인정보입니다.");
     }
