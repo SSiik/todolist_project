@@ -78,5 +78,5 @@ MIT &copy; [NoHack](mailto:lbjp114@gmail.com)
 [ng]: /images/stack/nginx.svg
 [ra]: /images/stack/rabbitmq.svg
 [gw]: /images/stack/github.svg
-[jk]: /images/stack/jenkins.svg
+[jk]: /images/stack/jenkins-svgrepo-com.svg
 
