@@ -2,7 +2,7 @@
 
 <p align="center">
   <br>
-  <img src="./images/common/flowchart.">
+  <img src="./images/stack/flowchart.">
   <br>
 </p>
 
